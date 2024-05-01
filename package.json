@@ -36,10 +36,10 @@
 	"devDependencies": {
 		"@playform/build": "0.0.7",
 		"@playform/document": "0.0.6",
-		"@types/node": "^20.8.9",
-		"@types/sinon": "^10.0.20",
-		"sinon": "^17.0.0",
-		"user-agent-data-types": "^0.4.2"
+		"@types/node": "20.12.7",
+		"@types/sinon": "17.0.3",
+		"sinon": "17.0.1",
+		"user-agent-data-types": "0.4.2"
 	},
 	"publishConfig": {
 		"access": "public"
