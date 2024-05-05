@@ -20,6 +20,7 @@ const getAICore = async (key: string, vscodeAPI: typeof vscode, xhrOverride?: IX
 	const postPlugin = await import(/* webpackMode: "eager" */ "@microsoft/1ds-post-js");
 	const appInsightsCore = new oneDs.AppInsightsCore();
 	const collectorChannelPlugin: PostChannel = new postPlugin.PostChannel();
+
 	// Configure the app insights core to send to collector++ and disable logging of debug info
 	const coreConfig: IExtendedConfiguration = {
 		instrumentationKey: key,
@@ -52,7 +53,7 @@ const getAICore = async (key: string, vscodeAPI: typeof vscode, xhrOverride?: IX
 	appInsightsCore.addTelemetryInitializer((envelope: any) => {
 		envelope["ext"] = envelope["ext"] ?? {};
 		envelope["ext"]["web"] = envelope["ext"]["web"] ?? {};
-		envelope["ext"]["web"]["consentDetails"] = '{"GPC_DataSharingOptIn":false}';
+		envelope["ext"]["web"]["consentDetails"] = "{\"GPC_DataSharingOptIn\":false}";
 
 		// Only add the remaining flags when `telemetry.internalTesting` is enabled
 		if (!internalTesting) {
