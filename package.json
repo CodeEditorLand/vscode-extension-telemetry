@@ -1,27 +1,7 @@
 {
 	"name": "@vscode/extension-telemetry",
-	"version": "0.0.1",
-	"private": false,
 	"description": "A module for Visual Studio Code extensions to report consistent telemetry.",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandExtensionTelemetry#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandExtensionTelemetry/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandExtensionTelemetry.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
 	"sideEffects": false,
-	"type": "module",
 	"main": "./dist/node/node/telemetryReporter.js",
 	"browser": "./dist/browser/browser/telemetryReporter.js",
 	"types": "./dist/telemetryReporter.d.ts",
@@ -35,13 +15,9 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/node": "20.12.10",
 		"@types/sinon": "17.0.3",
 		"sinon": "17.0.1",
 		"user-agent-data-types": "0.4.2"
-	},
-	"publishConfig": {
-		"access": "public"
 	}
 }
