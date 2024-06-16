@@ -12,9 +12,9 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"@types/node": "^20.8.9",
-		"@types/sinon": "^10.0.20",
-		"sinon": "^17.0.0",
+		"@types/node": "^20.14.2",
+		"@types/sinon": "^17.0.3",
+		"sinon": "^18.0.0",
 		"user-agent-data-types": "^0.4.2"
 	}
 }
