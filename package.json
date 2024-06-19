@@ -11,7 +11,7 @@
   "sideEffects": false,
   "license": "MIT",
   "engines": {
-    "vscode": "1.75.0"
+    "vscode": "^1.75.0"
   },
   "scripts": {
     "prepack": "node injectVersion.js",
@@ -20,22 +20,22 @@
     "compile": "tsc -p src/browser/tsconfig.json && tsc -p src/node/tsconfig.json"
   },
   "dependencies": {
-    "@microsoft/1ds-core-js": "4.2.2",
-    "@microsoft/1ds-post-js": "4.2.2",
-    "@microsoft/applicationinsights-web-basic": "3.2.2"
+    "@microsoft/1ds-core-js": "^4.1.2",
+    "@microsoft/1ds-post-js": "^4.1.2",
+    "@microsoft/applicationinsights-web-basic": "^3.1.2"
   },
   "devDependencies": {
-    "@types/mocha": "10.0.6",
-    "@types/node": "20.14.5",
-    "@types/sinon": "17.0.3",
-    "@types/vscode": "1.90.0",
-    "@typescript-eslint/eslint-plugin": "7.13.1",
-    "@typescript-eslint/parser": "7.13.1",
-    "eslint": "9.5.0",
-    "mocha": "10.4.0",
-    "sinon": "18.0.0",
-    "typescript": "5.4.5",
-    "user-agent-data-types": "0.4.2"
+    "@types/mocha": "^10.0.3",
+    "@types/node": "^20.8.9",
+    "@types/sinon": "^10.0.20",
+    "@types/vscode": "^1.75.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "eslint": "^8.52.0",
+    "mocha": "^10.2.0",
+    "sinon": "^17.0.0",
+    "typescript": "^5.3.3",
+    "user-agent-data-types": "^0.4.2"
   },
   "repository": {
     "type": "git",
