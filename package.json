@@ -1,20 +1,20 @@
 {
-	"browser": "./dist/browser/browser/telemetryReporter.js",
-	"dependencies": {},
-	"description": "A module for Visual Studio Code extensions to report consistent telemetry.",
-	"devDependencies": {
-		"@types/node": "^20.8.9",
-		"@types/sinon": "^10.0.20",
-		"sinon": "^17.0.0",
-		"user-agent-data-types": "^0.4.2"
-	},
-	"main": "./dist/node/node/telemetryReporter.js",
 	"name": "@vscode/extension-telemetry",
+	"description": "A module for Visual Studio Code extensions to report consistent telemetry.",
+	"sideEffects": false,
+	"main": "./dist/node/node/telemetryReporter.js",
+	"browser": "./dist/browser/browser/telemetryReporter.js",
+	"types": "./dist/telemetryReporter.d.ts",
 	"scripts": {
 		"build": "npm run compile",
 		"compile": "tsc -p src/browser/tsconfig.json && tsc -p src/node/tsconfig.json",
 		"prepack": "node injectVersion.js"
 	},
-	"sideEffects": false,
-	"types": "./dist/telemetryReporter.d.ts"
+	"dependencies": {},
+	"devDependencies": {
+		"@types/node": "20.14.12",
+		"@types/sinon": "17.0.3",
+		"sinon": "18.0.0",
+		"user-agent-data-types": "0.4.2"
+	}
 }
