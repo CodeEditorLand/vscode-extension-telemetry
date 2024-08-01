@@ -3,9 +3,9 @@
 	"dependencies": {},
 	"description": "A module for Visual Studio Code extensions to report consistent telemetry.",
 	"devDependencies": {
-		"@types/node": "20.8.9",
-		"@types/sinon": "10.0.20",
-		"sinon": "17.0.0",
+		"@types/node": "22.0.2",
+		"@types/sinon": "17.0.3",
+		"sinon": "18.0.0",
 		"user-agent-data-types": "0.4.2"
 	},
 	"main": "./dist/node/node/telemetryReporter.js",
