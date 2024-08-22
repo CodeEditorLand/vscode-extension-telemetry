@@ -1,13 +1,15 @@
 # [@vscode/extension-telemetry](https://www.npmjs.com/package/@vscode/extension-telemetry)
 
-Follow [guide to set up Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/create-workspace-resource) in Azure and get your connection string. Don't worry about hardcoding it, it is not sensitive.
+Follow
+[guide to set up Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/create-workspace-resource)
+in Azure and get your connection string. Don't worry about hardcoding it, it is
+not sensitive.
 
 # Install
-With npm:
-`npm install @vscode/extension-telemetry`
 
-With yarn:
-`yarn add @vscode/extension-telemetry`
+With npm: `npm install @vscode/extension-telemetry`
+
+With yarn: `yarn add @vscode/extension-telemetry`
 
 # Usage
 
