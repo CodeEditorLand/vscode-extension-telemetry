@@ -1,0 +1,10 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"lib": ["ES2015","DOM"],
+		"module": "ES2020",
+		"moduleResolution": "node",
+		"outDir": "../../dist/browser",
+	},
+	"include": [".", "../common", "../../node_modules/user-agent-data-types"]
+}
