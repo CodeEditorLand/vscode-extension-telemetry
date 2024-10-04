@@ -7,13 +7,16 @@ import type { ReplacementOption } from "./baseTelemetryReporter";
 export const enum TelemetryLevel {
 	ON = "on",
 	ERROR = "error",
-	OFF = "off"
+	OFF = "off",
 }
 
 export class TelemetryUtil {
 	private static _instance: TelemetryUtil | undefined;
 
-	public static applyReplacements(data: Record<string, any>, replacementOptions: ReplacementOption[]) {
+	public static applyReplacements(
+		data: Record<string, any>,
+		replacementOptions: ReplacementOption[],
+	) {
 		for (const key of Object.keys(data)) {
 			for (const option of replacementOptions) {
 				if (option.lookup.test(key)) {
@@ -37,7 +40,7 @@ export class TelemetryUtil {
 			key.length === 74 &&
 			key[32] === "-" &&
 			key[41] === "-" &&
-			key[46]	=== "-" &&
+			key[46] === "-" &&
 			key[51] === "-" &&
 			key[56] === "-" &&
 			key[69] === "-"
@@ -58,13 +61,20 @@ export class TelemetryUtil {
 	// __GDPR__COMMON__ "common.isnewappinstall" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
 	// __GDPR__COMMON__ "common.product" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
 	// __GDPR__COMMON__ "common.telemetryclientversion" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
-	public static getAdditionalCommonProperties(osShim: { release: string, platform: string, architecture: string }) {
+	public static getAdditionalCommonProperties(osShim: {
+		release: string;
+		platform: string;
+		architecture: string;
+	}) {
 		return {
 			"common.os": osShim.platform,
 			"common.nodeArch": osShim.architecture,
-			"common.platformversion":  (osShim.release || "").replace(/^(\d+)(\.\d+)?(\.\d+)?(.*)/, "$1$2$3"),
+			"common.platformversion": (osShim.release || "").replace(
+				/^(\d+)(\.\d+)?(\.\d+)?(.*)/,
+				"$1$2$3",
+			),
 			// Do not change this string as it gets found and replaced upon packaging
-			"common.telemetryclientversion": "PACKAGE_JSON_VERSION"
+			"common.telemetryclientversion": "PACKAGE_JSON_VERSION",
 		};
 	}
 
