@@ -3,19 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type {
-	AppInsightsCore,
-	IExtendedConfiguration,
-} from "@microsoft/1ds-core-js";
-import type {
-	IChannelConfiguration,
-	IXHROverride,
-	PostChannel,
-} from "@microsoft/1ds-post-js";
+import type { AppInsightsCore, IExtendedConfiguration } from "@microsoft/1ds-core-js";
+import type { IChannelConfiguration, IXHROverride, PostChannel } from "@microsoft/1ds-post-js";
 import type * as vscode from "vscode";
-
-import { SenderData } from "./baseTelemetryReporter";
 import type { BaseTelemetryClient } from "./baseTelemetrySender";
+import { SenderData } from "./baseTelemetryReporter";
 
 /**
  * Configures 1DS properly and returns the core client object
@@ -23,31 +15,24 @@ import type { BaseTelemetryClient } from "./baseTelemetrySender";
  * @param xhrOverride An optional override to use for requests instead of the XHTMLRequest object. Useful for node environments
  * @returns The AI core object
  */
-const getAICore = async (
-	key: string,
-	vscodeAPI: typeof vscode,
-	xhrOverride?: IXHROverride,
-): Promise<AppInsightsCore> => {
-	const oneDs = await import(
-		/* webpackMode: "eager" */ "@microsoft/1ds-core-js"
-	);
-	const postPlugin = await import(
-		/* webpackMode: "eager" */ "@microsoft/1ds-post-js"
-	);
+const getAICore = async (key: string, vscodeAPI: typeof vscode, xhrOverride?: IXHROverride): Promise<AppInsightsCore> => {
+	const oneDs = await import(/* webpackMode: "eager" */ "@microsoft/1ds-core-js");
+	const postPlugin = await import(/* webpackMode: "eager" */ "@microsoft/1ds-post-js");
 	const appInsightsCore = new oneDs.AppInsightsCore();
 	const collectorChannelPlugin: PostChannel = new postPlugin.PostChannel();
 
 	// Configure the app insights core to send to collector++ and disable logging of debug info
 	const coreConfig: IExtendedConfiguration = {
 		instrumentationKey: key,
-		endpointUrl:
-			"https://mobile.events.data.microsoft.com/OneCollector/1.0",
+		endpointUrl: "https://mobile.events.data.microsoft.com/OneCollector/1.0",
 		loggingLevelTelemetry: 0,
 		loggingLevelConsole: 0,
 		disableCookiesUsage: true,
 		disableDbgExt: true,
 		disableInstrumentationKeyValidation: true,
-		channels: [[collectorChannelPlugin]],
+		channels: [[
+			collectorChannelPlugin
+		]]
 	};
 
 	if (xhrOverride) {
@@ -55,10 +40,9 @@ const getAICore = async (
 		// Configure the channel to use a XHR Request override since it's not available in node
 		const channelConfig: IChannelConfiguration = {
 			alwaysUseXhrOverride: true,
-			httpXHROverride: xhrOverride,
+			httpXHROverride: xhrOverride
 		};
-		coreConfig.extensionConfig[collectorChannelPlugin.identifier] =
-			channelConfig;
+		coreConfig.extensionConfig[collectorChannelPlugin.identifier] = channelConfig;
 	}
 
 	const config = vscodeAPI.workspace.getConfiguration("telemetry");
@@ -69,8 +53,7 @@ const getAICore = async (
 	appInsightsCore.addTelemetryInitializer((envelope: any) => {
 		envelope["ext"] = envelope["ext"] ?? {};
 		envelope["ext"]["web"] = envelope["ext"]["web"] ?? {};
-		envelope["ext"]["web"]["consentDetails"] =
-			'{"GPC_DataSharingOptIn":false}';
+		envelope["ext"]["web"]["consentDetails"] = "{\"GPC_DataSharingOptIn\":false}";
 
 		// Only add the remaining flags when `telemetry.internalTesting` is enabled
 		if (!internalTesting) {
@@ -79,7 +62,7 @@ const getAICore = async (
 
 		envelope["ext"]["utc"] = envelope["ext"]["utc"] ?? {};
 		// Sets it to be internal only based on Windows UTC flagging
-		envelope["ext"]["utc"]["flags"] = 0x0000811ecd;
+		envelope["ext"]["utc"]["flags"] = 0x0000811ECD;
 	});
 
 	return appInsightsCore;
@@ -90,16 +73,8 @@ const getAICore = async (
  * @param key The ingestion key
  * @param xhrOverride An optional override to use for requests instead of the XHTMLRequest object. Useful for node environments
  */
-export const oneDataSystemClientFactory = async (
-	key: string,
-	vscodeAPI: typeof vscode,
-	xhrOverride?: IXHROverride,
-): Promise<BaseTelemetryClient> => {
-	let appInsightsCore: AppInsightsCore | undefined = await getAICore(
-		key,
-		vscodeAPI,
-		xhrOverride,
-	);
+export const oneDataSystemClientFactory = async (key: string, vscodeAPI: typeof vscode, xhrOverride?: IXHROverride): Promise<BaseTelemetryClient> => {
+	let appInsightsCore: AppInsightsCore | undefined = await getAICore(key, vscodeAPI, xhrOverride);
 	const flushOneDS = async () => {
 		try {
 			const flushPromise = new Promise<void>((resolve, reject) => {
@@ -125,16 +100,10 @@ export const oneDataSystemClientFactory = async (
 			try {
 				appInsightsCore?.track({
 					name: eventName,
-					baseData: {
-						name: eventName,
-						properties: data?.properties,
-						measurements: data?.measurements,
-					},
+					baseData: { name: eventName, properties: data?.properties, measurements: data?.measurements }
 				});
 			} catch (e: any) {
-				throw new Error(
-					"Failed to log event to app insights!\n" + e.message,
-				);
+				throw new Error("Failed to log event to app insights!\n" + e.message);
 			}
 		},
 		flush: flushOneDS,
@@ -144,18 +113,14 @@ export const oneDataSystemClientFactory = async (
 					resolve();
 					return;
 				}
-				appInsightsCore.unload(
-					false,
-					() => {
-						resolve();
-						appInsightsCore = undefined;
-						return;
-					},
-					1000,
-				);
+				appInsightsCore.unload(false, () => {
+					resolve();
+					appInsightsCore = undefined;
+					return;
+				}, 1000);
 			});
 			return disposePromise;
-		},
+		}
 	};
 	return telemetryClient;
 };

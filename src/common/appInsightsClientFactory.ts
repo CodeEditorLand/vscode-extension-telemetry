@@ -5,33 +5,22 @@
 
 import type { IChannelConfiguration } from "@microsoft/1ds-post-js";
 import { BreezeChannelIdentifier } from "@microsoft/applicationinsights-common";
-import type {
-	IConfiguration,
-	IXHROverride,
-} from "@microsoft/applicationinsights-core-js";
+import type { IConfiguration, IXHROverride } from "@microsoft/applicationinsights-core-js";
 import type { ApplicationInsights } from "@microsoft/applicationinsights-web-basic";
-
 import { ReplacementOption, SenderData } from "./baseTelemetryReporter";
 import { BaseTelemetryClient } from "./baseTelemetrySender";
 import { TelemetryUtil } from "./util";
 
-export const appInsightsClientFactory = async (
-	connectionString: string,
-	machineId: string,
-	xhrOverride?: IXHROverride,
-	replacementOptions?: ReplacementOption[],
-): Promise<BaseTelemetryClient> => {
+export const appInsightsClientFactory = async (connectionString: string, machineId: string, xhrOverride?: IXHROverride, replacementOptions?: ReplacementOption[]): Promise<BaseTelemetryClient> => {
 	let appInsightsClient: ApplicationInsights | undefined;
 	try {
-		const basicAISDK = await import(
-			/* webpackMode: "eager" */ "@microsoft/applicationinsights-web-basic"
-		);
+		const basicAISDK = await import/* webpackMode: "eager" */("@microsoft/applicationinsights-web-basic");
 		const extensionConfig: IConfiguration["extensionConfig"] = {};
 		if (xhrOverride) {
 			// Configure the channel to use a XHR Request override since it's not available in node
 			const channelConfig: IChannelConfiguration = {
 				alwaysUseXhrOverride: true,
-				httpXHROverride: xhrOverride,
+				httpXHROverride: xhrOverride
 			};
 			extensionConfig[BreezeChannelIdentifier] = channelConfig;
 		}
@@ -48,6 +37,7 @@ export const appInsightsClientFactory = async (
 			disableInstrumentationKeyValidation: true,
 			extensionConfig,
 		});
+
 	} catch (e) {
 		return Promise.reject(e);
 	}
@@ -63,11 +53,7 @@ export const appInsightsClientFactory = async (
 				data: properties,
 				baseType: "EventData",
 				ext: { user: { id: machineId, authId: machineId } },
-				baseData: {
-					name: eventName,
-					properties: data?.properties,
-					measurements: data?.measurements,
-				},
+				baseData: { name: eventName, properties: data?.properties, measurements: data?.measurements }
 			});
 		},
 		flush: async () => {
@@ -75,17 +61,14 @@ export const appInsightsClientFactory = async (
 		},
 		dispose: async () => {
 			const unloadPromise = new Promise<void>((resolve) => {
-				appInsightsClient?.unload(
-					true,
-					() => {
-						resolve();
-						appInsightsClient = undefined;
-					},
-					1000,
-				);
-			});
+				appInsightsClient?.unload(true, () => {
+					resolve();
+					appInsightsClient = undefined;
+				}, 1000);
+			}
+			);
 			return unloadPromise;
-		},
+		}
 	};
 	return telemetryClient;
 };

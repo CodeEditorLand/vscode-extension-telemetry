@@ -3,22 +3,19 @@
  *--------------------------------------------------------*/
 
 import type * as vscode from "vscode";
-
-import type {
-	TelemetryEventMeasurements,
-	TelemetryEventProperties,
-} from "../../dist/telemetryReporter";
+import type { TelemetryEventMeasurements, TelemetryEventProperties } from "../../dist/telemetryReporter";
 import { ILazyTelemetrySender } from "./baseTelemetrySender";
 
 export interface SenderData {
-	properties?: TelemetryEventProperties;
-	measurements?: TelemetryEventMeasurements;
+	properties?: TelemetryEventProperties,
+	measurements?: TelemetryEventMeasurements
 }
 
 /**
  * A replacement option for the app insights client. This allows the sender to filter out any sensitive or unnecessary information from the telemetry server.
  */
 export interface ReplacementOption {
+
 	/**
 	 * A regular expression matching any property to be removed or replaced from the telemetry server.
 	 */
@@ -34,21 +31,16 @@ export class BaseTelemetryReporter {
 	private userOptIn = false;
 	private errorOptIn = false;
 	private readonly disposables: vscode.Disposable[] = [];
-	private readonly _onDidChangeTelemetryLevel =
-		new this.vscodeAPI.EventEmitter<"all" | "error" | "crash" | "off">();
-	public readonly onDidChangeTelemetryLevel =
-		this._onDidChangeTelemetryLevel.event;
+	private readonly _onDidChangeTelemetryLevel = new this.vscodeAPI.EventEmitter<"all" | "error" | "crash" | "off">();
+	public readonly onDidChangeTelemetryLevel = this._onDidChangeTelemetryLevel.event;
 	private readonly telemetryLogger: vscode.TelemetryLogger;
 
 	constructor(
 		private telemetrySender: ILazyTelemetrySender,
 		private readonly vscodeAPI: typeof vscode,
-		initializationOptions?: vscode.TelemetryLoggerOptions,
+		initializationOptions?: vscode.TelemetryLoggerOptions
 	) {
-		this.telemetryLogger = this.vscodeAPI.env.createTelemetryLogger(
-			this.telemetrySender,
-			initializationOptions,
-		);
+		this.telemetryLogger = this.vscodeAPI.env.createTelemetryLogger(this.telemetrySender, initializationOptions);
 
 		// Keep track of the user's opt-in status
 		this.updateUserOptIn();
@@ -64,10 +56,7 @@ export class BaseTelemetryReporter {
 		this.errorOptIn = this.telemetryLogger.isErrorsEnabled;
 		this.userOptIn = this.telemetryLogger.isUsageEnabled;
 		// The sender is lazy loaded so if telemetry is off it's not loaded in
-		if (
-			this.telemetryLogger.isErrorsEnabled ||
-			this.telemetryLogger.isUsageEnabled
-		) {
+		if (this.telemetryLogger.isErrorsEnabled || this.telemetryLogger.isUsageEnabled) {
 			this.telemetrySender.instantiateSender();
 		}
 		this._onDidChangeTelemetryLevel.fire(this.telemetryLevel);
@@ -95,19 +84,13 @@ export class BaseTelemetryReporter {
 		eventName: string,
 		properties: TelemetryEventProperties | undefined,
 		measurements: TelemetryEventMeasurements | undefined,
-		dangerous: boolean,
+		dangerous: boolean
 	): void {
 		// If it's dangerous we skip going through the logger as the logger checks opt-in status, etc.
 		if (dangerous) {
-			this.telemetrySender.sendEventData(eventName, {
-				properties,
-				measurements,
-			});
+			this.telemetrySender.sendEventData(eventName, { properties, measurements });
 		} else {
-			this.telemetryLogger.logUsage(eventName, {
-				properties,
-				measurements,
-			});
+			this.telemetryLogger.logUsage(eventName, { properties, measurements });
 		}
 	}
 
@@ -118,18 +101,10 @@ export class BaseTelemetryReporter {
 	 * @param properties The properties to send with the event
 	 * @param measurements The measurements (numeric values) to send with the event
 	 */
-	public sendTelemetryEvent(
-		eventName: string,
-		properties?: TelemetryEventProperties,
-		measurements?: TelemetryEventMeasurements,
-	): void {
-		this.internalSendTelemetryEvent(
-			eventName,
-			properties,
-			measurements,
-			false,
-		);
+	public sendTelemetryEvent(eventName: string, properties?: TelemetryEventProperties, measurements?: TelemetryEventMeasurements): void {
+		this.internalSendTelemetryEvent(eventName, properties, measurements, false);
 	}
+
 
 	/**
 	 * Sends a raw (unsanitized) telemetry event with the given properties and measurements.
@@ -138,29 +113,18 @@ export class BaseTelemetryReporter {
 	 * @param properties The set of properties to add to the event in the form of a string key value pair
 	 * @param measurements The set of measurements to add to the event in the form of a string key  number value pair
 	 */
-	public sendRawTelemetryEvent(
-		eventName: string,
-		properties?: TelemetryEventProperties,
-		measurements?: TelemetryEventMeasurements,
-	): void {
+	public sendRawTelemetryEvent(eventName: string, properties?: TelemetryEventProperties, measurements?: TelemetryEventMeasurements): void {
 		const modifiedProperties = { ...properties };
 		for (const propertyKey of Object.keys(modifiedProperties ?? {})) {
 			const propertyValue = modifiedProperties[propertyKey];
-			if (
-				typeof propertyKey === "string" &&
-				propertyValue !== undefined
-			) {
+			if (typeof propertyKey === "string" && propertyValue !== undefined) {
 				// Trusted values are not sanitized, which is what we want for raw telemetry
-				modifiedProperties[propertyKey] =
-					new this.vscodeAPI.TelemetryTrustedValue<string>(
-						typeof propertyValue === "string"
-							? propertyValue
-							: propertyValue.value,
-					);
+				modifiedProperties[propertyKey] = new this.vscodeAPI.TelemetryTrustedValue<string>(typeof propertyValue === "string" ? propertyValue : propertyValue.value);
 			}
 		}
 
 		this.sendTelemetryEvent(eventName, modifiedProperties, measurements);
+
 	}
 
 	/**
@@ -171,19 +135,10 @@ export class BaseTelemetryReporter {
 	 * @param measurements The measurements (numeric values) to send with the event
 	 * @param sanitize Whether or not to sanitize to the properties and measures, defaults to true
 	 */
-	public sendDangerousTelemetryEvent(
-		eventName: string,
-		properties?: TelemetryEventProperties,
-		measurements?: TelemetryEventMeasurements,
-	): void {
+	public sendDangerousTelemetryEvent(eventName: string, properties?: TelemetryEventProperties, measurements?: TelemetryEventMeasurements): void {
 		// Since telemetry is probably off when sending dangerously, we must start the sender
 		this.telemetrySender.instantiateSender();
-		this.internalSendTelemetryEvent(
-			eventName,
-			properties,
-			measurements,
-			true,
-		);
+		this.internalSendTelemetryEvent(eventName, properties, measurements, true);
 	}
 
 	/**
@@ -198,18 +153,12 @@ export class BaseTelemetryReporter {
 		eventName: string,
 		properties: TelemetryEventProperties | undefined,
 		measurements: TelemetryEventMeasurements | undefined,
-		dangerous: boolean,
+		dangerous: boolean
 	): void {
 		if (dangerous) {
-			this.telemetrySender.sendEventData(eventName, {
-				properties,
-				measurements,
-			});
+			this.telemetrySender.sendEventData(eventName, { properties, measurements });
 		} else {
-			this.telemetryLogger.logError(eventName, {
-				properties,
-				measurements,
-			});
+			this.telemetryLogger.logError(eventName, { properties, measurements });
 		}
 	}
 
@@ -219,17 +168,8 @@ export class BaseTelemetryReporter {
 	 * @param properties The properties to send with the event
 	 * @param measurements The measurements (numeric values) to send with the event
 	 */
-	public sendTelemetryErrorEvent(
-		eventName: string,
-		properties?: TelemetryEventProperties,
-		measurements?: TelemetryEventMeasurements,
-	): void {
-		this.internalSendTelemetryErrorEvent(
-			eventName,
-			properties,
-			measurements,
-			false,
-		);
+	public sendTelemetryErrorEvent(eventName: string, properties?: TelemetryEventProperties, measurements?: TelemetryEventMeasurements): void {
+		this.internalSendTelemetryErrorEvent(eventName, properties, measurements,false);
 	}
 
 	/**
@@ -240,19 +180,10 @@ export class BaseTelemetryReporter {
 	 * @param measurements The measurements (numeric values) to send with the event
 	 * @param sanitize Whether or not to run the properties and measures through sanitiziation, defaults to true
 	 */
-	public sendDangerousTelemetryErrorEvent(
-		eventName: string,
-		properties?: TelemetryEventProperties,
-		measurements?: TelemetryEventMeasurements,
-	): void {
+	public sendDangerousTelemetryErrorEvent(eventName: string, properties?: TelemetryEventProperties, measurements?: TelemetryEventMeasurements): void {
 		// Since telemetry is probably off when sending dangerously, we must start the sender
 		this.telemetrySender.instantiateSender();
-		this.internalSendTelemetryErrorEvent(
-			eventName,
-			properties,
-			measurements,
-			true,
-		);
+		this.internalSendTelemetryErrorEvent(eventName, properties, measurements, true);
 	}
 
 	/**
@@ -261,6 +192,6 @@ export class BaseTelemetryReporter {
 	public async dispose(): Promise<any> {
 		await this.telemetrySender.dispose();
 		this.telemetryLogger.dispose();
-		return Promise.all(this.disposables.map((d) => d.dispose()));
+		return Promise.all(this.disposables.map(d => d.dispose()));
 	}
 }
