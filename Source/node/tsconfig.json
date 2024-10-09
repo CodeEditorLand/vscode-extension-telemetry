@@ -5,7 +5,7 @@
 		"lib": ["ES2015", "DOM"],
 		"module": "CommonJS",
 		"moduleResolution": "node",
-		"outDir": "../../dist/node",
+		"outDir": "../../dist/node"
 	},
 	"include": [".", "../common", "../../vscode.proposed.telemetryLogger.d.ts"]
 }
