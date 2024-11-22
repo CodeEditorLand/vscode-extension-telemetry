@@ -92,6 +92,7 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 			message: exception.message,
 			name: exception.name,
 		};
+
 		if (data) {
 			const errorProperties = data.properties || data;
 			data.properties = { ...errorProperties, ...errorData };

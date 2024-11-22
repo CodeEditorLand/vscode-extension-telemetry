@@ -31,10 +31,13 @@ const getAICore = async (
 	const oneDs = await import(
 		/* webpackMode: "eager" */ "@microsoft/1ds-core-js"
 	);
+
 	const postPlugin = await import(
 		/* webpackMode: "eager" */ "@microsoft/1ds-post-js"
 	);
+
 	const appInsightsCore = new oneDs.AppInsightsCore();
+
 	const collectorChannelPlugin: PostChannel = new postPlugin.PostChannel();
 
 	// Configure the app insights core to send to collector++ and disable logging of debug info
@@ -62,6 +65,7 @@ const getAICore = async (
 	}
 
 	const config = vscodeAPI.workspace.getConfiguration("telemetry");
+
 	const internalTesting = config.get<boolean>("internalTesting");
 
 	appInsightsCore.initialize(coreConfig, []);
@@ -100,20 +104,24 @@ export const oneDataSystemClientFactory = async (
 		vscodeAPI,
 		xhrOverride,
 	);
+
 	const flushOneDS = async () => {
 		try {
 			const flushPromise = new Promise<void>((resolve, reject) => {
 				if (!appInsightsCore) {
 					resolve();
+
 					return;
 				}
 				appInsightsCore.flush(true, (completedFlush) => {
 					if (!completedFlush) {
 						reject("Failed to flush app 1DS!");
+
 						return;
 					}
 				});
 			});
+
 			return flushPromise;
 		} catch (e: any) {
 			throw new Error("Failed to flush 1DS!\n" + e.message);
@@ -142,6 +150,7 @@ export const oneDataSystemClientFactory = async (
 			const disposePromise = new Promise<void>((resolve) => {
 				if (!appInsightsCore) {
 					resolve();
+
 					return;
 				}
 				appInsightsCore.unload(
@@ -149,13 +158,16 @@ export const oneDataSystemClientFactory = async (
 					() => {
 						resolve();
 						appInsightsCore = undefined;
+
 						return;
 					},
 					1000,
 				);
 			});
+
 			return disposePromise;
 		},
 	};
+
 	return telemetryClient;
 };

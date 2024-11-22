@@ -22,11 +22,14 @@ export const appInsightsClientFactory = async (
 	replacementOptions?: ReplacementOption[],
 ): Promise<BaseTelemetryClient> => {
 	let appInsightsClient: ApplicationInsights | undefined;
+
 	try {
 		const basicAISDK = await import(
 			/* webpackMode: "eager" */ "@microsoft/applicationinsights-web-basic"
 		);
+
 		const extensionConfig: IConfiguration["extensionConfig"] = {};
+
 		if (xhrOverride) {
 			// Configure the channel to use a XHR Request override since it's not available in node
 			const channelConfig: IChannelConfiguration = {
@@ -55,6 +58,7 @@ export const appInsightsClientFactory = async (
 	const telemetryClient: BaseTelemetryClient = {
 		logEvent: (eventName: string, data?: SenderData) => {
 			const properties = { ...data?.properties, ...data?.measurements };
+
 			if (replacementOptions?.length) {
 				TelemetryUtil.applyReplacements(properties, replacementOptions);
 			}
@@ -84,8 +88,10 @@ export const appInsightsClientFactory = async (
 					1000,
 				);
 			});
+
 			return unloadPromise;
 		},
 	};
+
 	return telemetryClient;
 };

@@ -32,6 +32,7 @@ function getXHROverride() {
 					"Content-Length": Buffer.byteLength(payload.data),
 				},
 			};
+
 			try {
 				const req = https.request(payload.urlString, options, (res) => {
 					res.on("data", function (responseData) {
@@ -58,6 +59,7 @@ function getXHROverride() {
 			}
 		},
 	};
+
 	return customHttpXHROverride;
 }
 
@@ -86,6 +88,7 @@ export default class TelemetryReporter extends BaseTelemetryReporter {
 		};
 
 		const sender = new BaseTelemetrySender(connectionString, clientFactory);
+
 		if (connectionString && connectionString.indexOf("AIF-") === 0) {
 			throw new Error(
 				"AIF keys are no longer supported. Please switch to 1DS keys for 1st party extensions",

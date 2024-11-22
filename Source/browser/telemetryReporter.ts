@@ -19,6 +19,7 @@ function getBrowserRelease(navigator: Navigator): string {
 			navigator.userAgentData.brands[
 				navigator.userAgentData.brands.length - 1
 			];
+
 		return `${navigator.userAgentData.platform} - ${browser?.brand} v${browser?.version}}`;
 	} else {
 		// clean the user agent using the logic from here:

@@ -144,8 +144,10 @@ export class BaseTelemetryReporter {
 		measurements?: TelemetryEventMeasurements,
 	): void {
 		const modifiedProperties = { ...properties };
+
 		for (const propertyKey of Object.keys(modifiedProperties ?? {})) {
 			const propertyValue = modifiedProperties[propertyKey];
+
 			if (
 				typeof propertyKey === "string" &&
 				propertyValue !== undefined
@@ -261,6 +263,7 @@ export class BaseTelemetryReporter {
 	public async dispose(): Promise<any> {
 		await this.telemetrySender.dispose();
 		this.telemetryLogger.dispose();
+
 		return Promise.all(this.disposables.map((d) => d.dispose()));
 	}
 }
