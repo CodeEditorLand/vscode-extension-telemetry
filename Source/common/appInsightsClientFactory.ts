@@ -15,12 +15,7 @@ import { ReplacementOption, SenderData } from "./baseTelemetryReporter";
 import { BaseTelemetryClient } from "./baseTelemetrySender";
 import { TelemetryUtil } from "./util";
 
-export const appInsightsClientFactory = async (
-	connectionString: string,
-	machineId: string,
-	xhrOverride?: IXHROverride,
-	replacementOptions?: ReplacementOption[],
-): Promise<BaseTelemetryClient> => {
+export const appInsightsClientFactory = async (connectionString: string, machineId: string, sessionId: string, xhrOverride?: IXHROverride, replacementOptions?: ReplacementOption[]): Promise<BaseTelemetryClient> => {
 	let appInsightsClient: ApplicationInsights | undefined;
 
 	try {
@@ -39,8 +34,15 @@ export const appInsightsClientFactory = async (
 			extensionConfig[BreezeChannelIdentifier] = channelConfig;
 		}
 
+		let instrumentationKey: string | undefined;
+		if (!connectionString.startsWith("InstrumentationKey=")) {
+			instrumentationKey = connectionString;
+		}
+
+		const authConfig = instrumentationKey ? { instrumentationKey } : { connectionString };
+
 		appInsightsClient = new basicAISDK.ApplicationInsights({
-			connectionString: connectionString,
+			...authConfig,
 			disableAjaxTracking: true,
 			disableExceptionTracking: true,
 			disableFetchTracking: true,
@@ -66,12 +68,8 @@ export const appInsightsClientFactory = async (
 				name: eventName,
 				data: properties,
 				baseType: "EventData",
-				ext: { user: { id: machineId, authId: machineId } },
-				baseData: {
-					name: eventName,
-					properties: data?.properties,
-					measurements: data?.measurements,
-				},
+				ext: { user: { id: machineId, authId: machineId }, app: { sesId: sessionId } },
+				baseData: { name: eventName, properties: data?.properties, measurements: data?.measurements }
 			});
 		},
 		flush: async () => {
