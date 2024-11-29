@@ -61,9 +61,12 @@ export class TelemetryUtil {
 	// __GDPR__COMMON__ "common.isnewappinstall" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
 	// __GDPR__COMMON__ "common.product" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
 	// __GDPR__COMMON__ "common.telemetryclientversion" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
+
 	public static getAdditionalCommonProperties(osShim: {
 		release: string;
+
 		platform: string;
+
 		architecture: string;
 	}) {
 		return {
@@ -83,6 +86,7 @@ export class TelemetryUtil {
 		if (!TelemetryUtil._instance) {
 			TelemetryUtil._instance = new TelemetryUtil();
 		}
+
 		return TelemetryUtil._instance;
 	}
 }

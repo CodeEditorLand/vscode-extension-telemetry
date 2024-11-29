@@ -37,10 +37,12 @@ export const appInsightsClientFactory = async (
 				alwaysUseXhrOverride: true,
 				httpXHROverride: xhrOverride,
 			};
+
 			extensionConfig[BreezeChannelIdentifier] = channelConfig;
 		}
 
 		let instrumentationKey: string | undefined;
+
 		if (!connectionString.startsWith("InstrumentationKey=")) {
 			instrumentationKey = connectionString;
 		}
@@ -72,6 +74,7 @@ export const appInsightsClientFactory = async (
 			if (replacementOptions?.length) {
 				TelemetryUtil.applyReplacements(properties, replacementOptions);
 			}
+
 			appInsightsClient?.track({
 				name: eventName,
 				data: properties,
@@ -96,6 +99,7 @@ export const appInsightsClientFactory = async (
 					true,
 					() => {
 						resolve();
+
 						appInsightsClient = undefined;
 					},
 					1000,

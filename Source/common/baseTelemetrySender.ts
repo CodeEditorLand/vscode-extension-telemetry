@@ -8,12 +8,15 @@ import { SenderData } from "./baseTelemetryReporter";
 
 export interface BaseTelemetryClient {
 	logEvent(eventName: string, data?: SenderData): void;
+
 	flush(): Promise<void>;
+
 	dispose(): Promise<void>;
 }
 
 export interface ILazyTelemetrySender extends TelemetrySender {
 	instantiateSender(): void;
+
 	dispose(): Promise<void>;
 }
 
@@ -27,20 +30,25 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 	// Whether or not the client has been instantiated
 	private _instantiationStatus: InstantiationStatus =
 		InstantiationStatus.NOT_INSTANTIATED;
+
 	private _telemetryClient: BaseTelemetryClient | undefined;
 
 	// Queues used to store events until the sender is ready
 	private _eventQueue: Array<{
 		eventName: string;
+
 		data: SenderData | undefined;
 	}> = [];
+
 	private _exceptionQueue: Array<{
 		exception: Error;
+
 		data: SenderData | undefined;
 	}> = [];
 
 	// Necessary information to create a telemetry client
 	private _clientFactory: (key: string) => Promise<BaseTelemetryClient>;
+
 	private _key: string;
 
 	constructor(
@@ -48,6 +56,7 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 		clientFactory: (key: string) => Promise<BaseTelemetryClient>,
 	) {
 		this._clientFactory = clientFactory;
+
 		this._key = key;
 	}
 
@@ -64,8 +73,10 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 			) {
 				this._eventQueue.push({ eventName, data });
 			}
+
 			return;
 		}
+
 		this._telemetryClient.logEvent(eventName, data);
 	}
 
@@ -85,8 +96,10 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 			) {
 				this._exceptionQueue.push({ exception, data });
 			}
+
 			return;
 		}
+
 		const errorData = {
 			stack: exception.stack,
 			message: exception.message,
@@ -95,10 +108,12 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 
 		if (data) {
 			const errorProperties = data.properties || data;
+
 			data.properties = { ...errorProperties, ...errorData };
 		} else {
 			data = { properties: errorData };
 		}
+
 		this._telemetryClient.logEvent("unhandlederror", data);
 	}
 
@@ -112,8 +127,10 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 	async dispose(): Promise<void> {
 		if (this._telemetryClient) {
 			await this._telemetryClient.dispose();
+
 			this._telemetryClient = undefined;
 		}
+
 		return;
 	}
 
@@ -124,10 +141,13 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 		this._eventQueue.forEach(({ eventName, data }) =>
 			this.sendEventData(eventName, data),
 		);
+
 		this._eventQueue = [];
+
 		this._exceptionQueue.forEach(({ exception, data }) =>
 			this.sendErrorData(exception, data),
 		);
+
 		this._exceptionQueue = [];
 	}
 
@@ -140,12 +160,15 @@ export class BaseTelemetrySender implements ILazyTelemetrySender {
 		) {
 			return;
 		}
+
 		this._instantiationStatus = InstantiationStatus.INSTANTIATING;
 		// Call the client factory to get the client and then let it know it's instatntiated
 		this._clientFactory(this._key)
 			.then((client) => {
 				this._telemetryClient = client;
+
 				this._instantiationStatus = InstantiationStatus.INSTANTIATED;
+
 				this._flushQueues();
 			})
 			.catch((err) => {

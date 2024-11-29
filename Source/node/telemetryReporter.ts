@@ -47,11 +47,13 @@ function getXHROverride() {
 						oncomplete(0, {});
 					});
 				});
+
 				req.write(payload.data, (err) => {
 					if (err) {
 						oncomplete(0, {});
 					}
 				});
+
 				req.end();
 			} catch {
 				// If it errors out, send status of 0 and a blank response to oncomplete so we can retry events
@@ -95,6 +97,7 @@ export default class TelemetryReporter extends BaseTelemetryReporter {
 				"AIF keys are no longer supported. Please switch to 1DS keys for 1st party extensions",
 			);
 		}
+
 		super(sender, vscode, {
 			additionalCommonProperties:
 				TelemetryUtil.getAdditionalCommonProperties(osShim),

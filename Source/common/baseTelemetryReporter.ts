@@ -12,6 +12,7 @@ import { ILazyTelemetrySender } from "./baseTelemetrySender";
 
 export interface SenderData {
 	properties?: TelemetryEventProperties;
+
 	measurements?: TelemetryEventMeasurements;
 }
 
@@ -32,12 +33,17 @@ export interface ReplacementOption {
 
 export class BaseTelemetryReporter {
 	private userOptIn = false;
+
 	private errorOptIn = false;
+
 	private readonly disposables: vscode.Disposable[] = [];
+
 	private readonly _onDidChangeTelemetryLevel =
 		new this.vscodeAPI.EventEmitter<"all" | "error" | "crash" | "off">();
+
 	public readonly onDidChangeTelemetryLevel =
 		this._onDidChangeTelemetryLevel.event;
+
 	private readonly telemetryLogger: vscode.TelemetryLogger;
 
 	constructor(
@@ -52,6 +58,7 @@ export class BaseTelemetryReporter {
 
 		// Keep track of the user's opt-in status
 		this.updateUserOptIn();
+
 		this.telemetryLogger.onDidChangeEnableStates(() => {
 			this.updateUserOptIn();
 		});
@@ -62,6 +69,7 @@ export class BaseTelemetryReporter {
 	 */
 	private updateUserOptIn(): void {
 		this.errorOptIn = this.telemetryLogger.isErrorsEnabled;
+
 		this.userOptIn = this.telemetryLogger.isUsageEnabled;
 		// The sender is lazy loaded so if telemetry is off it's not loaded in
 		if (
@@ -70,6 +78,7 @@ export class BaseTelemetryReporter {
 		) {
 			this.telemetrySender.instantiateSender();
 		}
+
 		this._onDidChangeTelemetryLevel.fire(this.telemetryLevel);
 	}
 
@@ -180,6 +189,7 @@ export class BaseTelemetryReporter {
 	): void {
 		// Since telemetry is probably off when sending dangerously, we must start the sender
 		this.telemetrySender.instantiateSender();
+
 		this.internalSendTelemetryEvent(
 			eventName,
 			properties,
@@ -249,6 +259,7 @@ export class BaseTelemetryReporter {
 	): void {
 		// Since telemetry is probably off when sending dangerously, we must start the sender
 		this.telemetrySender.instantiateSender();
+
 		this.internalSendTelemetryErrorEvent(
 			eventName,
 			properties,
@@ -262,6 +273,7 @@ export class BaseTelemetryReporter {
 	 */
 	public async dispose(): Promise<any> {
 		await this.telemetrySender.dispose();
+
 		this.telemetryLogger.dispose();
 
 		return Promise.all(this.disposables.map((d) => d.dispose()));

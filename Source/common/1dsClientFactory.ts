@@ -60,6 +60,7 @@ const getAICore = async (
 			alwaysUseXhrOverride: true,
 			httpXHROverride: xhrOverride,
 		};
+
 		coreConfig.extensionConfig[collectorChannelPlugin.identifier] =
 			channelConfig;
 	}
@@ -72,7 +73,9 @@ const getAICore = async (
 
 	appInsightsCore.addTelemetryInitializer((envelope: any) => {
 		envelope["ext"] = envelope["ext"] ?? {};
+
 		envelope["ext"]["web"] = envelope["ext"]["web"] ?? {};
+
 		envelope["ext"]["web"]["consentDetails"] =
 			'{"GPC_DataSharingOptIn":false}';
 
@@ -113,6 +116,7 @@ export const oneDataSystemClientFactory = async (
 
 					return;
 				}
+
 				appInsightsCore.flush(true, (completedFlush) => {
 					if (!completedFlush) {
 						reject("Failed to flush app 1DS!");
@@ -153,10 +157,12 @@ export const oneDataSystemClientFactory = async (
 
 					return;
 				}
+
 				appInsightsCore.unload(
 					false,
 					() => {
 						resolve();
+
 						appInsightsCore = undefined;
 
 						return;

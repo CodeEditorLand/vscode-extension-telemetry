@@ -60,6 +60,7 @@ export default class TelemetryReporter extends BaseTelemetryReporter {
 				"AIF keys are no longer supported. Please switch to 1DS keys for 1st party extensions",
 			);
 		}
+
 		super(sender, vscode, {
 			additionalCommonProperties:
 				TelemetryUtil.getAdditionalCommonProperties(osShim),
