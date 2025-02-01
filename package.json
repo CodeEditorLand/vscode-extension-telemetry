@@ -12,7 +12,7 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"@types/node": "22.10.10",
+		"@types/node": "22.13.0",
 		"@types/sinon": "17.0.3",
 		"sinon": "19.0.2",
 		"user-agent-data-types": "0.4.2"
